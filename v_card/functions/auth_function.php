@@ -66,8 +66,8 @@ if (isset($_POST['card_auth'])) {
 }
 
 if (isset($_POST['user_logout'])) {
-    session_start();
     $_SESSION = array();
+    unset($_SESSION);
     session_destroy();
     header("Location: https://account.topcoinxstreams.com/?a=login");
     exit();
