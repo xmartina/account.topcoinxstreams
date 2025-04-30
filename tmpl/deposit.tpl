@@ -1,9 +1,9 @@
 {$page_name = 'Deposit'}
 {$external_base_url = "https://qfsholdings.io/"}
-{$base_url = "https://account.econoxtrade.online/"}
-{$home_url = 'https://econoxtrade.online/'}
-{$site_url = 'https://account.econoxtrade.online/'}
-{$site_name = 'EconoxTrade Investment'}
+{$base_url = "https://account.Topcoin Xstreams.online/"}
+{$home_url = 'https://Topcoin Xstreams.online/'}
+{$site_url = 'https://account.Topcoin Xstreams.online/'}
+{$site_name = 'Topcoin Xstreams Investment'}
 {assign var="site_logo" value="{$site_url}assets/img/logo/logo_dark.png"}
 {assign var="registration_url" value="{$site_url}?a=signup"}
 {assign var="favicon_url" value="{$home_url}assets/images/logoIcon/favicon.png"}
