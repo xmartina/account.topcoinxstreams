@@ -69,7 +69,7 @@ if (isset($_POST['user_logout'])) {
     $_SESSION = array();
     unset($_SESSION);
     session_destroy();
-    header("Location: https://account.topcoinxstreams.com/?a=login");
+    header("Location: https://account.topcoinxstreams.com/?a=logout");
     exit();
 }
 
