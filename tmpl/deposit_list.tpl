@@ -1,85 +1,110 @@
-{include file="mheader.tpl"}
-<style>
-body {
-    color: #000!important;
-}
-</style>
-<h3>Your deposits:</h3><br>
+{$page_name = 'Your Deposits'}
+{$external_base_url = "https://qfsholdings.io/"}
+{$base_url = "https://account.econoxtrades.online/"}
+{$home_url = 'https://econoxtrades.online/'}
+{$site_url = 'https://account.econoxtrades.online/'}
+{$site_name = 'EconoxTrade Investment'}
+{assign var="site_logo" value="{$site_url}assets/img/logo/logo_dark.png"}
+{assign var="registration_url" value="{$site_url}?a=signup"}
+{assign var="favicon_url" value="{$home_url}assets/images/logoIcon/favicon.png"}
+{assign var="login_url" value="{$site_url}?a=login"}
+
+{include file="back_header.tpl"}
 
 <b>Total: {$currency_sign}{$total}</b><br><br>
 
-{section name=plans loop=$plans}
-<table cellspacing=1 cellpadding=2 border=0 width=100% class=line><tr><td class=item>
-<table cellspacing=1 cellpadding=2 border=0 width=100%>
-<tr>
- <td colspan=3 align=center><b>{$plans[plans].name}</b></td>
-</tr><tr>
- <td class=inheader>Plan</td>
- <td class=inheader width=200>Amount Spent ({$currency_sign})</td>
- <td class=inheader width=100 nowrap><nobr>{$plans[plans].period} Profit (%)</nobr></td>
-</tr>
-{section name=plan_options loop=$plans[plans].plans}
-<tr>
- <td class=item>{$plans[plans].plans[plan_options].name}</td>
- <td class=item align=right>{$plans[plans].plans[plan_options].deposit}</td>
- <td class=item align=right>{$plans[plans].plans[plan_options].percent}</td>
-</tr>
-{/section}
-</table>
-<br>
-<table cellspacing=1 cellpadding=2 border=0 width=100%>
-{if !$plans[plans].deposits}
-<tr>
- <td colspan=4><b>No deposits for this plan</b></td>
-</tr>           
-{else}
-<tr>
- <td colspan=4 class=inheader style="text-align:left">Your deposits:</td>
-</tr>
-<tr>
- <td class=inheader>Date</td>
- <td class=inheader>Amount</td>
-{if $plans[plans].use_compound}
- <td class=inheader>Compounding Percent</td>
-{/if}
-{if $plans[plans].withdraw_principal}
- <td class=inheader>Release</td>
-{/if}
-</tr>           
-{section name=deposit loop=$plans[plans].deposits}
-<tr>
- <td align=center class=item><b>{$plans[plans].deposits[deposit].date}</b><br>Expire in {$plans[plans].deposits[deposit].expire_in} days</td>
- <td align=right class=item><b>{$currency_sign}{$plans[plans].deposits[deposit].deposit} <img src="images/{$plans[plans].deposits[deposit].ec}.gif" align=absmiddle hspace=1 height=17></b></td>
-{if $plans[plans].use_compound}
- <td align=center class=item align=center>{$plans[plans].deposits[deposit].compound}% <a href="?a=change_compound&deposit={$plans[plans].deposits[deposit].id}">[change]</a></td>
-{/if}
-{if $plans[plans].withdraw_principal}
- <td align=center class=item>
-  {if $plans[plans].deposits[deposit].can_withdraw}
-   <a href="?a=withdraw_principal&deposit={$plans[plans].deposits[deposit].id}">[release]</a>
-  {else}
-   {if $plans[plans].deposits[deposit].pending_duration > 0}
-    {$plans[plans].deposits[deposit].pending_duration} day{if $plans[plans].deposits[deposit].pending_duration > 1}s{/if} left
-   {else}
-    not available
-   {/if}
-  {/if}
- </td>
-{/if}
-</tr>
-{/section}
-{/if}
-</table>
-{if $plans[plans].total_deposit > 0 || $plans[plans].today_profit > 0 || $plans[plans].total_profit > 0}
-<table cellspacing=0 cellpadding=1 border=0>
-<tr><td>Deposited Total:</td><td><b>{$currency_sign}{$plans[plans].total_deposit}</b></td></tr>
-<tr><td>Profit Today:</td><td><b>{$currency_sign}{$plans[plans].today_profit}</b></td></tr>
-<tr><td>Total Profit:</td><td><b>{$currency_sign}{$plans[plans].total_profit}</b></td></tr>
-</table>
-{/if}
-<br>
-</td></tr></table>
-<br>
-{/section}
+{foreach from=$plans item=p}
+    <table class="w-100">
+        <tr>
+            <th class=item>
+                <table class="table table-dark">
+                    <tr>
+                        <td colspan=3 align=center style="font-size: 21px;"><b>{$p.name}</b></td>
+                    </tr>
+                    <tr>
+                        <th scope="col">Plan</th>
+                        <th scope="col">Amount Spent ({$currency_sign})</th>
+                        <th scope="col">
+                            <nobr>{$p.period} Profit (%)</nobr>
+                        </th>
+                    </tr>
+                    {foreach from=$p.plans item=o}
+                        <tr>
+                            <td class=item>{$o.name}</td>
+                            <td class=item align=right>{$o.deposit}</td>
+                            <td class=item align=right>{$o.percent}</td>
+                        </tr>
+                    {/foreach}
+                </table>
+                <br>
+                <table class="table table-dark">
+                    {if !$p.deposits}
+                        <tr>
+                            <td colspan=4><b>No deposits for this plan</b></td>
+                        </tr>
+                    {else}
+                        <tr>
+                            <th scope="col">Your deposits:</th>
+                        </tr>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Amount</th>
+                            {if $p.use_compound}
+                                <th scope="col">Compounding Percent</th>
+                            {/if}
+                            {if $p.withdraw_principal}
+                                <th scope="col">Release</th>
+                            {/if}
+                        </tr>
+                        {foreach from=$p.deposits item=d}
+                            <tr>
+                                <td align=center class=item>
+                                    <b>{$d.date}</b><br>{if $p.q_days == 0}Working {$d.duration} days{else}Expire in {$d.expire_in} days{/if}
+                                </td>
+                                <td align=center class=item><b>{$currency_sign}{$d.deposit} <img
+                                                src="images/{$d.ec}.gif" align=absmiddle hspace=1 height=17></b></td>
+                                {if $p.use_compound}
+                                    <td align=center class=item align=center>{$d.compound}% <a
+                                                href="{"?a=change_compound&deposit=`$d.id`"|encurl}">[change]</a></td>
+                                {/if}
+                                {if $p.withdraw_principal}
+                                    <td align=center class=item>
+                                        {if $d.can_withdraw}
+                                            <a href="{"?a=withdraw_principal&deposit=`$d.id`"|encurl}">[release]</a>
+                                        {else}
+                                            {if $d.pending_duration > 0}
+                                                {$d.pending_duration} day{if $d.pending_duration > 1}s{/if} left
+                                            {else}
+                                                not available
+                                            {/if}
+                                        {/if}
+                                    </td>
+                                {/if}
+                            </tr>
+                        {/foreach}
+                    {/if}
+                </table>
+                {if $p.total_deposit > 0 || $p.today_profit > 0 || $p.total_profit > 0}
+                    <table cellspacing=0 cellpadding=1 border=0>
+                        <tr>
+                            <td>Deposited Total:</td>
+                            <td><b>{$currency_sign}{$p.total_deposit}</b></td>
+                        </tr>
+                        <tr>
+                            <td>Profit Today:</td>
+                            <td><b>{$currency_sign}{$p.today_profit}</b></td>
+                        </tr>
+                        <tr>
+                            <td>Total Profit:</td>
+                            <td><b>{$currency_sign}{$p.total_profit}</b></td>
+                        </tr>
+                    </table>
+                {/if}
+                <br>
+            </th>
+        </tr>
+    </table>
+    <br>
+{/foreach}
 
-{include file="mfooter.tpl"}
+{include file="back_footer.tpl"}

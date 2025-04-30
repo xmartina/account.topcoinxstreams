@@ -5,4 +5,6 @@
 <br>
 Thank you for your registration.<br>
 <br>
-Please check your e-mail account and confirm the registration. {include file="footer.tpl"} 
+Please check your e-mail account and confirm the registration.
+
+{include file="footer.tpl"} 

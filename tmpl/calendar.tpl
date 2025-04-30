@@ -31,6 +31,7 @@ percents[{$plans[p].i}] = new Array({$plans[p].min_deposit}, {$plans[p].max_depo
 {literal}
 paymentperiod = '{/literal}{$type.period}{literal}'; // 'd' - daily, 'w' - weekly, 'bw' - beweekly, 'm' - monthly, 'y' - yearly
 var maxdays = {/literal}{$type.q_days+$type.delay}{literal};
+if (maxdays == 0) maxdays = 100000;
 if (paymentperiod == 'h')
 {
   maxperiods = maxdays;
@@ -40,6 +41,7 @@ var returnprofit = {/literal}{$type.return_profit}{literal};
 var returnprofit_percent = {/literal}{$type.return_profit_percent}{literal};
 var compound = {/literal}{$type.use_compound}{literal};
 var delay = {/literal}{$type.delay}{literal};
+var currencyPow = 2;
 
 function CalculatePercent()
 {
@@ -384,12 +386,12 @@ function CalculateProfit(row)
       Profit += Amount * Math.pow(1 + Percent * CompoundPercent, i-1);
     }
 
-    Profit = Math.round(Profit * Percent * (1 - CompoundPercent) * 100) / 100;
+    Profit = Profit * Percent * (1 - CompoundPercent);
   }
   else
   {
     Deposit = Amount;
-    Profit = Math.round(Amount * Percent * Diff) / 100;
+    Profit = Amount * (Percent/100) * Diff;
   }
 
   if (returnprofit)
@@ -408,10 +410,9 @@ function CalculateProfit(row)
       Deposit = 0;
     }
   }
-  Profit = Math.round(Profit * 100) / 100;
 
-  document.getElementById('deposit').childNodes[0].data = Deposit;
-  document.getElementById('profit').childNodes[0].data = Profit;
+  document.getElementById('deposit').childNodes[0].data = Deposit.toFixed(currencyPow);
+  document.getElementById('profit').childNodes[0].data = Profit.toFixed(currencyPow);
 }
 
 function GetDaysInMonth(Month, Year)

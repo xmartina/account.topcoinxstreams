@@ -34,9 +34,9 @@ function checklogin() {
  <td class=menutxt>Password:</td>
  <td><input type=password name=password class=inpts size=15></td>
 </tr>
-{if $userinfo.validation_enabled == 1}
+{if $ti.check.login}
 <tr>
- <td class=menutxt><img src="{"?a=show_validation_image&`$userinfo.session_name`=`$userinfo.session_id`&rand=`$userinfo.rand`"|encurl}""></td>
+ <td class=menutxt><img src="{"?a=show_validation_image&`$ti.session.name`=`$ti.session.id`&rand=`$ti.session.rand`"|encurl}"></td>
  <td><input type=text name=validation_number class=inpts size=15></td>
 </tr>
 {/if}

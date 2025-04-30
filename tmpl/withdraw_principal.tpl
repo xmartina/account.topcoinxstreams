@@ -1,15 +1,15 @@
 {include file="header.tpl"}
 
 <h3>Withdraw Principal:</h3><br><br>
-{if $fatal} {if $fatal eq 'deposit_not_found'}Wrong deposit ID has been provided{/if} 
-{if $fatal eq 'withdraw_forbidden'}Can not process principal withdrawal for this 
-plan{/if} {if $fatal eq 'too_early_withdraw'}Can not process principal withdrawal 
-yet{/if} {if $fatal eq 'too_late_withdraw'}Can not process principal withdrawal 
-longer{/if} {if $fatal eq 'withdraw_complete'}Withdrawal has been sucessfully 
-completed.{/if} {else} {if $say == 'too_big_amount'}You have no such amount on 
-this deposit.<br>
-<br>{/if}
-{if $say == 'too_small_amount'}Provided amount is too small.<br><br>{/if}
+{if $fatal}
+ {if $fatal eq 'deposit_not_found'}Wrong deposit ID has been provided{/if} 
+ {if $fatal eq 'withdraw_forbidden'}Can not process principal withdrawal for this plan{/if}
+ {if $fatal eq 'too_early_withdraw'}Can not process principal withdrawal yet{/if}
+ {if $fatal eq 'too_late_withdraw'}Can not process principal withdrawal longer{/if}
+ {if $fatal eq 'withdraw_complete'}Withdrawal has been sucessfully completed.{/if}
+{else}
+ {if $say == 'too_big_amount'}You have no such amount on this deposit.<br><br>{/if}
+ {if $say == 'too_small_amount'}Provided amount is too small.<br><br>{/if}
 
 {if $preview == 1}
 
@@ -38,35 +38,31 @@ this deposit.<br>
 {else}
 
 <script>
+var max_amount = new Number('{$deposit.deposit}');
+var percent = new Number('{$type.withdraw_principal_percent}');
+var currency_pow = 8;
+
 {literal}
-function withdraw()
-{
-  var max_amount = new Number('{/literal}{$deposit.deposit}{literal}');
-  var percent = new Number('{/literal}{$type.withdraw_principal_percent}{literal}');
+function withdraw() {
   var out_val = new Number(document.withdraw_form.amount.value.replace(",","."));
   if (isNaN(out_val))
   { out_val = 0; }
-  out_val = Math.floor(out_val * 100) / 100;
+  out_val = out_val;
 
-  if (out_val > max_amount)
-  {
+  if (out_val > max_amount) {
     out_val = max_amount;
-    document.withdraw_form.amount.value = out_val;
+    document.withdraw_form.amount.value = out_val.toFixed(currency_pow);
   }
 
-  if (out_val < 0)
-  {
+  if (out_val < 0) {
     document.withdraw_form.amount.value = '';
     document.withdraw_form.quote.value = 0;
-  }
-  else
-  {
-    var fee = (Math.round(Math.floor(out_val * percent)) / 100);
-    if (fee <= 0.01) fee = 0.01;
+  } else {
+    var fee = out_val * (percent/ 100);
+    if (fee <= 0) fee = 0;
     out_val = out_val - fee;
     if (out_val < 0) out_val = 0;
-    out_val = (Math.round(Math.floor(out_val * 100)) / 100);
-    document.withdraw_form.quote.value = out_val;
+    document.withdraw_form.quote.value = out_val.toFixed(currency_pow);
   }
 }
 {/literal}

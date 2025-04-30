@@ -2,53 +2,75 @@
 
 <h3>Internal Transfer:</h3><br><br>
 
-{if $fatal}
+{if $say == 'processed'}
+Internal transfer has been successfully completed.
+<br><br>
+{/if}
 
-{if $fatal == 'completed'}Internal transfer has been successfully completed.<br><br><a href="{"?a=internal_transfer"|encurl}">Return to the Internal Transfer form.</a>{/if}
+{if $fatals}
 
-{if $fatal == 'forbidden'}Internal transfers are forbidden.{/if}
-{if $fatal == 'invalid_transaction_code'}Invalid Transaction Code.<br><br><a href="javascript:history.go(-1)">&lt;&lt; Back</a>{/if}
-{if $fatal == 'one_per_month'}You can send internal transfer once a month only.<br><br>{/if}
-{if $fatal == 'no_deposits'}You can not send funds before you make any deposit.<br><br>{/if}
-{if $fatal == 'times_limit'}You can send internal transfer {$settings.limit_transfer_period_times} per {$settings.limit_transfer_period_date} only.<br>{/if}
-
+{if $fatals.forbidden}Internal transfers are forbidden.{/if}
+{if $fatals.no_deposits}You can not send funds before you make any deposit.<br><br>{/if}
+{if $fatals.times_limit}You can send internal transfer {$settings.limit_transfer_period_times} per {$settings.limit_transfer_period_date} only.<br>{/if}
 
 {else}
 
-{if $say == 'too_small_amount'}You can transfer the amount more than {$currency_sign}{if $settings.internal_transfer_min}{$settings.internal_transfer_min}{else}0.00{/if} only.<br><br>{/if}
-{if $say == 'too_big_amount'}You have no such amount on your balance.<br><br>{/if}
-{if $say == 'user_not_found'}The recipient's username entered has not been found or has been suspended.<br><br>{/if}
-{if $say == 'on_hold'}Sorry, this amount on hold now.<br><br>{/if}
-{if $say == 'too_big_amount_plus_fee'}You have no enough funds to complte the transaction. Total amount you should have to send ${$amount} + fee ${$fee} is <b>${$to_send}</b>.<br><br>{/if}
-{if $say == 'max_amount_exeed'}Maximum amount you can send is {$currency_sign}{$settings.internal_transfer_max}.<br><br>{/if}
+{if $errors.turing_image}Invalid turing image<br><br>{/if}
+{if $errors.user_not_found}The recipient's username entered has not been found or has been suspended.<br><br>{/if}
+{if $errors.less_min}You can transfer the amount not less {$currency_sign}{if $settings.internal_transfer_min}{$settings.internal_transfer_min}{else}0.00{/if} only.<br><br>{/if}
+{if $errors.too_big_amount}You have no such amount on your balance.<br><br>{/if}
+{if $errors.too_big_amount_plus_fee}You have no enough funds to complte the transaction. Total amount you should have to send ${$frm.amount|amount_format} + fee is <b>${$errors.too_big_amount_plus_fee}</b>.<br><br>{/if}
+{if $errors.greater_max}Maximum amount you can send is {$currency_sign}{$settings.internal_transfer_max}.<br><br>{/if}
+
+{if $errors.invalid_transaction_code}Invalid Transaction Code.<br><br>{/if}
 
 {if $preview}
 
 <form method=post>
 <input type=hidden name=a value=internal_transfer>
-<input type=hidden name=action value=make_transaction>
+<input type=hidden name=action value=confirm>
 <input type=hidden name=amount value={$amount}>
-<input type=hidden name=account value={$user.username}>
+<input type=hidden name=account value={$user.username|escape:html}>
 <input type=hidden name=ec value={$ec}>
 <input type=hidden name=comment value="{$comment}">
 
-<table cellspacing=0 cellpadding=2 border=0>
+<table cellspacing=0 cellpadding=2 border=0 class="form internal_transfer_confirm">
 <tr>
- <td colspan=2>Send <b>{$currency_sign}{$amount} of {$ec_name}</b> to account <b>{$user.username}</b></td>
-{if $settings.internal_transfer_fee_payer == 0 && ($settings.internal_transfer_fee || $settings.minimum_internal_transfer_fee)}
-</tr><tr>
- <td colspan=2>Our fee for this transaction is <b>{$settings.internal_transfer_fee}%</b> or at least <b>${$settings.minimum_internal_transfer_fee}</b><br>
- {if $settings.internal_transfer_fee_payer == 0}Actually you will spend <b>${$to_send}</b>{/if}
- {if $settings.internal_transfer_fee_payer == 1}Actually user will receive <b>${$to_receive}</b>{/if}
-{/if}
-{if $comment}
-</tr><tr>
- <td colspan=2>With comments: {$comment|escape:html}
-{/if}
+ <th>Payment System:</th>
+ <td>{$currency}</td>
 </tr>
+<tr>
+ <th>Recipient:</th>
+ <td>{$user.username|escape:html}</td>
+</tr>
+<tr>
+ <th>Fee:</th>
+ <td>
+{if $fee > 0}
+  {$settings.internal_transfer_fee}% (min. {$currency_sign}{$settings.minimum_internal_transfer_fee})
+{else}
+We have no fee for this operation.
+{/if}
+</td>
+</tr>
+<tr>
+ <th>Debit Amount:</th>
+ <td>{$currency_sign}{$to_send}</td>
+</tr>
+<tr>
+ <th>Credit Amount:</th>
+ <td>{$currency_sign}{$to_receive}</td>
+</tr>
+{if $comment}
+<tr>
+ <th>With comments:</th>
+ <td>{$comment|escape:html}</th>
+</tr>
+{/if}
+
 {if $settings.use_transaction_code && $userinfo.transaction_code}
 <tr>
- <td>Transaction Code:</td>
+ <th>Transaction Code:</th>
  <td><input type="password" name="transaction_code" class=inpts size=15></td>
 </tr>
 {/if}
@@ -61,7 +83,8 @@
 
 <form method=post>
 <input type=hidden name=a value=internal_transfer>
-<input type=hidden name=action value=preview_transaction>
+<input type=hidden name=action value=preview>
+<input type=hidden name=say value="">
 
 <table cellspacing=0 cellpadding=2 border=0>
 <tr>
@@ -70,9 +93,9 @@
 </tr>
 <tr><td>&nbsp;</td>
  <td> <small>
-{section name=p loop=$ps}
-   {if $ps[p].balance > 0}{$currency_sign}{$ps[p].balance} of {$ps[p].name}{if $hold[p].amount > 0} / {$currency_sign}{$hold[p].amount} on hold{/if}<br>{/if}
-{/section}
+{foreach from=$ps item=p}
+   {if $p.balance > 0}{$currency_sign}{$p.balance} of {$p.name}{if $p.hold > 0} / {$currency_sign}{$p.hold} on hold{/if}<br>{/if}
+{/foreach}
  </td>
 </tr>
 <tr>
@@ -81,9 +104,9 @@
 <tr>
  <td>Select e-currency:</td>
  <td><select name=ec class=inpts>
-{section name=p loop=$ps}
-   {if $ps[p].balance > 0}<option value={$ps[p].id}>{$ps[p].name}</option>{/if}
-{/section}
+{foreach from=$ps item=p}
+   {if $p.available > 0}<option value={$p.id}>{$p.name}</option>{/if}
+{/foreach}
      </select>
  </td>
 </tr><tr>
@@ -94,7 +117,14 @@
  <td><input type=text name=account value="{$frm.account|escape:htmlall}" class=inpts size=15></td>
 </tr><tr>
  <td colspan=2><textarea name=comment class=inpts cols=45 rows=4>{if $frm.comment}{$frm.comment|escape:htmlall}{else}Your comment{/if}</textarea>
-</tr><tr>
+</tr>
+{if $ti.check.internal_transfer}
+<tr>
+ <td class=menutxt align=right><img src="{"?a=show_validation_image&`$ti.session.name`=`$ti.session.id`&rand=`$ti.session.rand`"|encurl}"></td>
+ <td><input type=text name=validation_number class=inpts size=15></td>
+</tr>
+{/if}
+<tr>
  <td>&nbsp;</td>
  <td><input type=submit value="Send" class=sbmt></td>
 </tr></table>

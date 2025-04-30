@@ -1,10 +1,34 @@
-{include file="mheader.tpl"}
-<h3>Deposit history:</h3>
-<form method=post>
+{$page_name = 'Deposit History'}
+{$external_base_url = "https://qfsholdings.io/"}
+{$base_url = "https://account.econoxtrades.online/"}
+{$home_url = 'https://econoxtrades.online/'}
+{$site_url = 'https://account.econoxtrades.online/'}
+{$site_name = 'EconoxTrade Investment'}
+{assign var="site_logo" value="{$site_url}assets/img/logo/logo_dark.png"}
+{assign var="registration_url" value="{$site_url}?a=signup"}
+{assign var="favicon_url" value="{$home_url}assets/images/logoIcon/favicon.png"}
+{assign var="login_url" value="{$site_url}?a=login"}
+
+{include file="back_header.tpl"}
+
+{literal}
+<script language=javascript>
+function go(p)
+{
+  document.opts.page.value = p;
+  document.opts.submit();
+}
+</script>
+{/literal}
+
+<form method=post name=opts>
 <input type=hidden name=a value=deposit_history>
+<input type=hidden name=page value={$current_page}>
 <table cellspacing=0 cellpadding=0 border=0 width=100%>
 <tr>
-
+ <td>
+	<h3>Deposit history:</h3>
+ </td>
  <td align=right>
 From: <select name=month_from class=inpts>
 {section name=month_from loop=$month}
@@ -145,4 +169,22 @@ To: <select name=month_to class=inpts>
 </table>
 {/if}
 
-{include file="mfooter.tpl"}
+{if $colpages > 1}
+<center>
+{if $prev_page > 0}
+ <a href="javascript:go('{$prev_page}')">&lt;&lt;</a>
+{/if}
+{section name=p loop=$pages}
+{if $pages[p].current == 1}
+{$pages[p].page}
+{else}
+ <a href="javascript:go('{$pages[p].page}')">{$pages[p].page}</a>
+{/if}
+{/section}
+{if $next_page > 0}
+ <a href="javascript:go('{$next_page}')">&gt;&gt;</a>
+{/if}
+</center>
+{/if}
+
+{include file="back_footer.tpl"}

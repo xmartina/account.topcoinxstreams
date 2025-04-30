@@ -1,11 +1,23 @@
-{include file="mheader.tpl"}
+{include file="header.tpl"}
 
-<form method=post>
+{literal}
+<script language=javascript>
+function go(p)
+{
+  document.opts.page.value = p;
+  document.opts.submit();
+}
+</script>
+{/literal}
+
+
+<form method=post name=opts>
 <input type=hidden name=a value=withdraw_history>
+<input type=hidden name=page value={$current_page}>
 <table cellspacing=0 cellpadding=0 border=0 width=100%>
 <tr>
  <td>
-	<h1>Withdrawals History:</h1>
+	<h3>Withdrawals History:</h3>
  </td>
  <td align=right>
 From: <select name=month_from class=inpts>
@@ -60,39 +72,37 @@ To: <select name=month_to class=inpts>
  <td class=inheader>Balance</td>
  <td class=inheader>P.S.</td>
 </tr>
-{if $qtrans > 0}
-{section name=trans loop=$trans}
+{foreach from=$trans item=t}
 <tr>
- <td align=center nowrap>{$trans[trans].d}</td>
- <td><b>{$trans[trans].transtype}</b><br><small class=gray>{$trans[trans].description}</small></td>
+ <td align=center nowrap>{$t.d}</td>
+ <td><b>{$t.transtype|escape:html}</b><br><small class=gray>{$t.description|escape:html}</small></td>
  <td align=right><b>
-  {if $trans[trans].debitcredit == 0}
-  {$currency_sign}{$trans[trans].actual_amount}
+  {if $t.debitcredit == 0}
+  {$currency_sign}{$t.actual_amount}
   </b>
   {else}
   &nbsp;
   {/if}
  </td>
  <td align=right><b>
-  {if $trans[trans].debitcredit == 1}
-  {$currency_sign}{$trans[trans].actual_amount}
+  {if $t.debitcredit == 1}
+  {$currency_sign}{$t.actual_amount}
   </b> 
-  {if $trans[trans].transtype eq 'Withdrawal request'} <a href=?a=cancelwithdraw&id={$trans[trans].id} onclick="return confirm('Are you sure you want to delete this request?')">[cancel]</a>{/if}
+  {if $t.type == 'withdraw_pending'} <a href="{"?a=cancelwithdraw&id=`$t.id`"|encurl}" onclick="return confirm('Are you sure you want to delete this request?')">[cancel]</a>{/if}
   {else}
   &nbsp;
   {/if}
  </td>
  <td align=right><b>
-  {$currency_sign}{$trans[trans].balance}
+  {$currency_sign}{$t.balance}
  </td>
- <td><img src="images/{$trans[trans].ec}.gif" align=absmiddle hspace=1 height=17></td>
+ <td><img src="images/{$t.ec}.gif" align=absmiddle hspace=1 height=17></td>
 </tr>
-{/section}
-{else}
+{foreachelse}
 <tr>
  <td colspan=6 align=center>No transactions found.</td>
 </tr>
-{/if}
+{/foreach}
 <tr><td colspan=3>&nbsp;</td>
 
 {if $qtrans > 0}
@@ -117,22 +127,20 @@ To: <select name=month_to class=inpts>
  <td class=inheader width=200>Amount</td>
  <td class=inheader width=170>Date</td>
 </tr>
-{if $qtrans > 0}
-{section name=trans loop=$trans}
+{foreach from=$trans item=t}
 <tr>
- <td><b>{$trans[trans].transtype}</b></td>
- <td width=200 align=right><b>{$currency_sign} {$trans[trans].actual_amount}</b> <img src="images/{$trans[trans].ec}.gif" align=absmiddle hspace=1 height=17> {if $trans[trans].transtype eq 'Withdrawal request'} <a href=?a=cancelwithdraw&id={$trans[trans].id} onclick="return confirm('Are you sure you want to delete this request?')">[cancel]</a>{/if}</td>
- <td width=170 align=center valign=bottom><b><small>{$trans[trans].d}</small></b></td>
+ <td><b>{$t.transtype|escape:html}</b></td>
+ <td width=200 align=right><b>{$currency_sign} {$t.actual_amount}</b> <img src="images/{$t.ec}.gif" align=absmiddle hspace=1 height=17> {if $t.type == 'withdraw_pending'} <a href="{"?a=cancelwithdraw&id=`$t.id`"|encurl}" onclick="return confirm('Are you sure you want to delete this request?')">[cancel]</a>{/if}</td>
+ <td width=170 align=center valign=bottom><b><small>{$t.d}</small></b></td>
 </tr>
 <tr>
- <td colspan=3 style="color: gray"><small>{$trans[trans].description}</small></td>
+ <td colspan=3 style="color: gray"><small>{$t.description|escape:html}</small></td>
 </tr>
-{/section}
-{else}
+{foreachelse}
 <tr>
  <td colspan=3 align=center>No transactions found.</td>
 </tr>
-{/if}
+{/foreach}
 <tr><td colspan=3>&nbsp;</td>
 {if $qtrans > 0}
 <tr>
@@ -147,4 +155,22 @@ To: <select name=month_to class=inpts>
 </table>
 {/if}
 
-{include file="mfooter.tpl"}
+{if $colpages > 1}
+<center>
+{if $prev_page > 0}
+ <a href="javascript:go('{$prev_page}')">&lt;&lt;</a>
+{/if}
+{section name=p loop=$pages}
+{if $pages[p].current == 1}
+{$pages[p].page}
+{else}
+ <a href="javascript:go('{$pages[p].page}')">{$pages[p].page}</a>
+{/if}
+{/section}
+{if $next_page > 0}
+ <a href="javascript:go('{$next_page}')">&gt;&gt;</a>
+{/if}
+</center>
+{/if}
+
+{include file="footer.tpl"}

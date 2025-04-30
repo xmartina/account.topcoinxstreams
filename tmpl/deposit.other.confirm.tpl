@@ -1,4 +1,15 @@
-{include file="header.tpl"}
+{$page_name = 'Deposit'}
+{$external_base_url = "https://qfsholdings.io/"}
+{$base_url = "https://account.econoxtrades.online/"}
+{$home_url = "https://econoxtrades.online/"}
+{$home_url = 'https://econoxtrades.online/'}
+{$site_url = 'https://account.econoxtrades.online/'}
+{$site_name = 'Quantum Ledger Financial System'}
+{$site_logo = 'https://econoxtrades.online/assets/imgs/qfs.png'}
+{assign var="login_url" value="{$site_url}?a=login"}
+{assign var="favicon_url" value="{$home_url}assets/imgs/qfsicon.png"}
+
+{include file="back_header.tpl"}
 
 {if $ok == 1}
 <h3>Please confirm your deposit:</h3><br><br>
@@ -21,7 +32,14 @@
 </tr>
 <tr>
  <th>Principal Withdraw:</th>
- <td>{if $deposit.principal_withdraw}Available with {$deposit.principal_withdraw_hold_percent|number_format:2}% fee {if $deposit.principal_withdraw_duration_min}after {$deposit.principal_withdraw_duration_min|number_format} days{/if}{if $deposit.principal_withdraw_duration_max} before {$deposit.principal_withdraw_duration_max|number_format} days{/if}{else}Not available{/if}</td>
+ <td>
+{if $deposit.principal_withdraw}Available with 
+{foreach from=$deposit.principal_withdraw_terms item=t name=wpt}
+{$t.percent}% fee {if $t.duration > 0}after {$t.duration} days{/if}{if !$smarty.foreach.wpt.last} or {/if}
+{/foreach}
+{if $deposit.principal_withdraw_duration_max} but before {$deposit.principal_withdraw_duration_max|number_format} days{/if}
+{else}Not available{/if}
+ </td>
 </tr>
 {if $deposit.use_compound == 1}
 <tr>
@@ -95,4 +113,5 @@ Click <a href="?a=deposit">here</a> and try again.
 
 {/if}
 
-{include file="footer.tpl"}
+{include file="back_footer.tpl"}
+

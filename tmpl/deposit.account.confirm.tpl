@@ -18,7 +18,14 @@
 </tr>
 <tr>
  <th>Principal Withdraw:</th>
- <td>{if $deposit.principal_withdraw}Available with {$deposit.principal_withdraw_hold_percent|number_format:2}% fee {if $deposit.principal_withdraw_duration_min}after {$deposit.principal_withdraw_duration_min|number_format} days{/if}{if $deposit.principal_withdraw_duration_max} before {$deposit.principal_withdraw_duration_max|number_format} days{/if}{else}Not available{/if}</td>
+ <td>
+{if $deposit.principal_withdraw}Available with 
+{foreach from=$deposit.principal_withdraw_terms item=t name=wpt}
+{$t.percent}% fee {if $t.duration > 0}after {$t.duration} days{/if}{if !$smarty.foreach.wpt.last} or {/if}
+{/foreach}
+{if $deposit.principal_withdraw_duration_max} but before {$deposit.principal_withdraw_duration_max|number_format} days{/if}
+{else}Not available{/if}
+ </td>
 </tr>
 {if $deposit.compound != -1}
 <tr>
