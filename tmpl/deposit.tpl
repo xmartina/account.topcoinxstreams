@@ -4,7 +4,7 @@
 {$home_url = 'https://Topcoin Xstreams.online/'}
 {$site_url = 'https://account.Topcoin Xstreams.online/'}
 {$site_name = 'Topcoin Xstreams Investment'}
-{assign var="site_logo" value="{$home_url}assets/images/logo.png"}
+{assign var="site_logo" value="{$home_url}assets/images/logo_dark.png"}
 {assign var="registration_url" value="{$site_url}?a=signup"}
 {assign var="favicon_url" value="{$home_url}assets/images/logoIcon/favicon.png"}
 {assign var="login_url" value="{$site_url}?a=login"}
