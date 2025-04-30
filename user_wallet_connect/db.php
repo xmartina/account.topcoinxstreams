@@ -1,9 +1,9 @@
 <?php
 $host = 'localhost';
 $port = '3306';
-$dbname = 'multistream6_capital_coin_1';
-$username = 'multistream6_capital_coin_user_3';
-$password = '+C@ppy126';
+$dbname = 'multistream6_topcoinxstreams';
+$username = 'multistream6_topcoinxstreams';
+$password = 'topcoinxstreams';
 
 try {
     $conn = new PDO("mysql:host=$host;port=$port;dbname=$dbname", $username, $password);

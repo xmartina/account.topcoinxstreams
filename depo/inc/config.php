@@ -1,10 +1,10 @@
 <?php
-const siteName= "Capital Coin";
+const siteName= "Topcoin Xstreams";
 function dbConnect(){
     $servername = "localhost";
-    $username = "multistream6_capital_coin_1";//DATABASE USERNAME
-    $password = "000000";//DATABASE PASSWORD
-    $database = "multistream6_capital_coin_1";//DATABASE NAME
+    $username = "multistream6_topcoinxstreams";//DATABASE USERNAME
+    $password = "topcoinxstreams";//DATABASE PASSWORD
+    $database = "multistream6_topcoinxstreams";//DATABASE NAME
     $dns = "mysql:host=$servername;dbname=$database";
 
     try {
