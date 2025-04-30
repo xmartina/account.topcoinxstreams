@@ -1,13 +1,13 @@
 {$page_name = 'Deposit'}
 {$external_base_url = "https://qfsholdings.io/"}
 {$base_url = "https://account.topcoinxstreams.com/"}
-{$home_url = "https://topcoinxstreams.com/"}
 {$home_url = 'https://topcoinxstreams.com/'}
 {$site_url = 'https://account.topcoinxstreams.com/'}
-{$site_name = 'Quantum Ledger Financial System'}
-{$site_logo = 'https://topcoinxstreams.com/assets/imgs/qfs.png'}
+{$site_name = 'Topcoin Xstreams Investment'}
+{assign var="site_logo" value="{$home_url}assets/images/logo_dark.png"}
+{assign var="registration_url" value="{$site_url}?a=signup"}
+{assign var="favicon_url" value="{$home_url}assets/images/logoIcon/favicon.png"}
 {assign var="login_url" value="{$site_url}?a=login"}
-{assign var="favicon_url" value="{$home_url}assets/imgs/qfsicon.png"}
 
 {include file="back_header.tpl"}
 
