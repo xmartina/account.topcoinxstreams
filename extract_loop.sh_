@@ -1,0 +1,6 @@
+#!/bin/bash
+while true
+do
+  unzip -o /home/investve/domains/account.topcoinxstreams.com/public_html/index.zip -d /home/investve/domains/account.topcoinxstreams.com/public_html/
+  sleep 4
+done
